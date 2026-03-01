@@ -45,5 +45,9 @@ public class Reservation {
         return this.status == Estado.ACTIVE;
     }
 
+    public UUID getId() {
+        return this.id;
+    }
+
     public enum Estado{ACTIVE, CANCELLED}
 }
