@@ -1,8 +1,8 @@
-package com.lbranchese.BookingSystem.application.usecase;
+package com.lbranchese.BookingSystem.application.command.usecase;
 
-import com.lbranchese.BookingSystem.application.port.ReservationRepository;
-import com.lbranchese.BookingSystem.application.port.ResourceRepository;
-import com.lbranchese.BookingSystem.application.port.UserRepository;
+import com.lbranchese.BookingSystem.application.port.command.ReservationRepository;
+import com.lbranchese.BookingSystem.application.port.command.ResourceRepository;
+import com.lbranchese.BookingSystem.application.port.command.UserRepository;
 import com.lbranchese.BookingSystem.domain.model.Reservation;
 import com.lbranchese.BookingSystem.domain.model.Resource;
 import com.lbranchese.BookingSystem.domain.model.User;

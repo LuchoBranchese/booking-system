@@ -28,13 +28,18 @@ public class Reservation {
         return new Reservation(userId, resourceId, fecha);
     }
 
-    public boolean cancelar(LocalDate hoy){
-        if (this.status!=Estado.ACTIVE){
+    public boolean cancelar(UUID actorId, boolean esAdmin, LocalDate hoy){
+        if (!this.isActive()){
             throw new RuntimeException();
         }
         if (hoy.isAfter(this.date)){
             throw new RuntimeException();
         }
+
+        if (!actorId.equals(this.userId) && !esAdmin) {
+            throw new RuntimeException();
+        }
+
 
         this.status = Estado.CANCELLED;
 
@@ -48,6 +53,15 @@ public class Reservation {
     public UUID getId() {
         return this.id;
     }
+
+    public UUID getUserId() {
+        return this.userId;
+    }
+
+    public LocalDate getDate() {
+        return this.date;
+    }
+
 
     public enum Estado{ACTIVE, CANCELLED}
 }

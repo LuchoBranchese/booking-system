@@ -40,6 +40,10 @@ public class User {
         else return false;
     }
 
+    public UUID getId(){
+        return this.id;
+    }
+
     public void aplicarPenalizacion(LocalDate fecha){
         this.bloqueadoHasta = fecha.plusDays(3);
     }

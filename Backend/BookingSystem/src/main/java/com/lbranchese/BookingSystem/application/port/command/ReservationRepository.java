@@ -1,4 +1,4 @@
-package com.lbranchese.BookingSystem.application.port;
+package com.lbranchese.BookingSystem.application.port.command;
 
 import com.lbranchese.BookingSystem.domain.model.Reservation;
 
