@@ -1,5 +1,6 @@
 package com.lbranchese.BookingSystem.domain.model;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
@@ -21,11 +22,23 @@ public class Reservation {
         this.status = Estado.ACTIVE;
     }
 
+    protected Reservation() {}
+
     public static Reservation create(UUID userId, UUID resourceId, LocalDate fecha, LocalDate hoy){
         if (fecha.isBefore(hoy)){
             throw new RuntimeException();
         }
         return new Reservation(userId, resourceId, fecha);
+    }
+
+    public static Reservation rehydrate(UUID id, UUID userId, UUID resourceId, LocalDate date, Estado status) {
+        Reservation reservation = new Reservation();
+        reservation.id = id;
+        reservation.userId = userId;
+        reservation.resourceId = resourceId;
+        reservation.date = date;
+        reservation.status = status;
+        return reservation;
     }
 
     public boolean cancelar(UUID actorId, boolean esAdmin, LocalDate hoy){
@@ -62,6 +75,15 @@ public class Reservation {
         return this.date;
     }
 
+    public UUID getResourceId() {
+        return resourceId;
+    }
 
-    public enum Estado{ACTIVE, CANCELLED}
+
+    public enum Estado{ACTIVE, CANCELLED;
+    }
+
+    public Estado getStatus() {
+        return this.status;
+    }
 }

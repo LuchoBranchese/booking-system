@@ -18,7 +18,11 @@ public class ReservationByResourceSummary {
 
     public enum Status {
         ACTIVE,
-        CANCELLED
+        CANCELLED;
+
+        public static Status fromDb(String value) {
+            return Status.valueOf(value.toUpperCase());
+        }
     }
 
     public UUID getUserId() {
