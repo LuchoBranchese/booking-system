@@ -9,39 +9,39 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserTest {
 
     @Test
-    void create_shouldThrow_whenRolIsNull() {
+    void create_shouldThrow_whenRoleIsNull() {
         assertThrows(RuntimeException.class, () -> User.create(null));
     }
 
     @Test
     void isAdmin_shouldReturnTrueOnlyForAdminRole() {
-        User admin = User.create(User.Rol.ADMIN);
-        User user = User.create(User.Rol.USER);
+        User admin = User.create(User.Role.ADMIN);
+        User user = User.create(User.Role.USER);
 
         assertTrue(admin.isAdmin());
         assertFalse(user.isAdmin());
     }
 
     @Test
-    void puedeReservar_shouldReturnTrue_whenUserIsNotBlocked() {
-        User user = User.create(User.Rol.USER);
+    void canReserve_shouldReturnTrue_whenUserIsNotBlocked() {
+        User user = User.create(User.Role.USER);
         LocalDate today = LocalDate.now();
 
-        assertTrue(user.puedeReservar(today));
+        assertTrue(user.canReserve(today));
     }
 
     @Test
-    void puedeReservar_shouldReturnFalse_untilThreeDaysAfterPenalizacion() {
-        User user = User.create(User.Rol.USER);
+    void canReserve_shouldReturnFalse_untilThreeDaysAfterPenalty() {
+        User user = User.create(User.Role.USER);
         LocalDate today = LocalDate.now();
 
-        user.aplicarPenalizacion(today);
+        user.applyPenalty(today);
 
-        assertFalse(user.puedeReservar(today));
-        assertFalse(user.puedeReservar(today.plusDays(1)));
-        assertFalse(user.puedeReservar(today.plusDays(2)));
-        assertFalse(user.puedeReservar(today.plusDays(3)));
-        assertTrue(user.puedeReservar(today.plusDays(4)));
+        assertFalse(user.canReserve(today));
+        assertFalse(user.canReserve(today.plusDays(1)));
+        assertFalse(user.canReserve(today.plusDays(2)));
+        assertFalse(user.canReserve(today.plusDays(3)));
+        assertTrue(user.canReserve(today.plusDays(4)));
     }
 
 }

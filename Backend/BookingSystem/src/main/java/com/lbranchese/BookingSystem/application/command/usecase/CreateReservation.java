@@ -10,39 +10,41 @@ import com.lbranchese.BookingSystem.domain.model.User;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class CrearReserva {
+
+public class CreateReservation {
 
     private final UserRepository userRepository;
     private final ResourceRepository resourceRepository;
     private final ReservationRepository reservationRepository;
 
-    public CrearReserva(UserRepository userRepository, ResourceRepository resourceRepository, ReservationRepository reservationRepository) {
+    public CreateReservation(UserRepository userRepository, ResourceRepository resourceRepository, ReservationRepository reservationRepository) {
         this.userRepository = userRepository;
         this.resourceRepository = resourceRepository;
         this.reservationRepository = reservationRepository;
     }
 
-    public UUID execute(UUID userId, UUID resourceId, LocalDate fecha, LocalDate hoy) {
+    public UUID execute(UUID userId, UUID resourceId, LocalDate date, LocalDate today) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException());
 
-        if (!user.puedeReservar(hoy)) {
+        if (!user.canReserve(today)) {
             throw new RuntimeException();
         }
 
         Resource resource = resourceRepository.findById(resourceId).orElseThrow(() -> new RuntimeException());
 
-        if (!resource.estaActivo()) {
+        if (!resource.isActive()) {
             throw new RuntimeException();
         }
 
-        if (reservationRepository.existsByResourceAndDate(resourceId, fecha)) {
+        if (reservationRepository.existsByResourceAndDate(resourceId, date)) {
             throw new RuntimeException();
         }
-        Reservation reservation = Reservation.create(userId, resourceId, fecha, hoy);
+        Reservation reservation = Reservation.create(userId, resourceId, date, today);
 
         reservationRepository.save(reservation);
 
         return reservation.getId();
     }
 }
+

@@ -24,7 +24,7 @@ class ReservationTest {
         assertEquals(resourceId, todayReservation.getResourceId());
         assertEquals(today, todayReservation.getDate());
         assertTrue(todayReservation.isActive());
-        assertEquals(Reservation.Estado.ACTIVE, todayReservation.getStatus());
+        assertEquals(Reservation.Status.ACTIVE, todayReservation.getStatus());
 
         assertNotNull(futureReservation.getId());
         assertEquals(futureDate, futureReservation.getDate());
@@ -43,7 +43,7 @@ class ReservationTest {
     }
 
     @Test
-    void cancelar_shouldCancel_whenActorIsOwnerBeforeReservationDate() {
+    void cancel_shouldCancel_whenActorIsOwnerBeforeReservationDate() {
         UUID userId = UUID.randomUUID();
         UUID resourceId = UUID.randomUUID();
         LocalDate today = LocalDate.now();
@@ -51,15 +51,15 @@ class ReservationTest {
 
         Reservation reservation = Reservation.create(userId, resourceId, reservationDate, today);
 
-        boolean sameDay = reservation.cancelar(userId, false, today);
+        boolean sameDay = reservation.cancel(userId, false, today);
 
         assertFalse(sameDay);
         assertFalse(reservation.isActive());
-        assertEquals(Reservation.Estado.CANCELLED, reservation.getStatus());
+        assertEquals(Reservation.Status.CANCELLED, reservation.getStatus());
     }
 
     @Test
-    void cancelar_shouldCancel_whenActorIsAdminEvenIfNotOwner() {
+    void cancel_shouldCancel_whenActorIsAdminEvenIfNotOwner() {
         UUID ownerId = UUID.randomUUID();
         UUID adminId = UUID.randomUUID();
         UUID resourceId = UUID.randomUUID();
@@ -68,28 +68,28 @@ class ReservationTest {
 
         Reservation reservation = Reservation.create(ownerId, resourceId, reservationDate, today);
 
-        boolean sameDay = reservation.cancelar(adminId, true, today);
+        boolean sameDay = reservation.cancel(adminId, true, today);
 
         assertFalse(sameDay);
-        assertEquals(Reservation.Estado.CANCELLED, reservation.getStatus());
+        assertEquals(Reservation.Status.CANCELLED, reservation.getStatus());
     }
 
     @Test
-    void cancelar_shouldReturnTrue_whenCancelledSameDay() {
+    void cancel_shouldReturnTrue_whenCancelledSameDay() {
         UUID userId = UUID.randomUUID();
         UUID resourceId = UUID.randomUUID();
         LocalDate today = LocalDate.now();
 
         Reservation reservation = Reservation.create(userId, resourceId, today, today);
 
-        boolean sameDay = reservation.cancelar(userId, false, today);
+        boolean sameDay = reservation.cancel(userId, false, today);
 
         assertTrue(sameDay);
-        assertEquals(Reservation.Estado.CANCELLED, reservation.getStatus());
+        assertEquals(Reservation.Status.CANCELLED, reservation.getStatus());
     }
 
     @Test
-    void cancelar_shouldThrow_whenReservationIsNotActive() {
+    void cancel_shouldThrow_whenReservationIsNotActive() {
         UUID userId = UUID.randomUUID();
         UUID resourceId = UUID.randomUUID();
         LocalDate today = LocalDate.now();
@@ -100,15 +100,15 @@ class ReservationTest {
                 userId,
                 resourceId,
                 reservationDate,
-                Reservation.Estado.CANCELLED
+                Reservation.Status.CANCELLED
         );
 
         assertThrows(RuntimeException.class,
-                () -> cancelledReservation.cancelar(userId, false, today));
+                () -> cancelledReservation.cancel(userId, false, today));
     }
 
     @Test
-    void cancelar_shouldThrow_whenTodayIsAfterReservationDate() {
+    void cancel_shouldThrow_whenTodayIsAfterReservationDate() {
         UUID userId = UUID.randomUUID();
         UUID resourceId = UUID.randomUUID();
         LocalDate reservationDate = LocalDate.now();
@@ -117,11 +117,11 @@ class ReservationTest {
         Reservation reservation = Reservation.create(userId, resourceId, reservationDate, reservationDate);
 
         assertThrows(RuntimeException.class,
-                () -> reservation.cancelar(userId, false, afterReservationDate));
+                () -> reservation.cancel(userId, false, afterReservationDate));
     }
 
     @Test
-    void cancelar_shouldThrow_whenActorIsNotOwnerAndNotAdmin() {
+    void cancel_shouldThrow_whenActorIsNotOwnerAndNotAdmin() {
         UUID ownerId = UUID.randomUUID();
         UUID otherUserId = UUID.randomUUID();
         UUID resourceId = UUID.randomUUID();
@@ -131,7 +131,7 @@ class ReservationTest {
         Reservation reservation = Reservation.create(ownerId, resourceId, reservationDate, today);
 
         assertThrows(RuntimeException.class,
-                () -> reservation.cancelar(otherUserId, false, today));
+                () -> reservation.cancel(otherUserId, false, today));
     }
 
 }

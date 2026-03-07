@@ -11,27 +11,27 @@ public class Reservation {
     private UUID userId;
     private UUID resourceId;
     private LocalDate date;
-    private Estado status;
+    private Status status;
 
-    private Reservation(UUID userId, UUID resourceId, LocalDate fecha){
+    private Reservation(UUID userId, UUID resourceId, LocalDate date){
 
         this.id = UUID.randomUUID();
         this.userId = userId;
         this.resourceId = resourceId;
-        this.date = fecha;
-        this.status = Estado.ACTIVE;
+        this.date = date;
+        this.status = Status.ACTIVE;
     }
 
     protected Reservation() {}
 
-    public static Reservation create(UUID userId, UUID resourceId, LocalDate fecha, LocalDate hoy){
-        if (fecha.isBefore(hoy)){
+    public static Reservation create(UUID userId, UUID resourceId, LocalDate date, LocalDate today){
+        if (date.isBefore(today)){
             throw new RuntimeException();
         }
-        return new Reservation(userId, resourceId, fecha);
+        return new Reservation(userId, resourceId, date);
     }
 
-    public static Reservation rehydrate(UUID id, UUID userId, UUID resourceId, LocalDate date, Estado status) {
+    public static Reservation rehydrate(UUID id, UUID userId, UUID resourceId, LocalDate date, Status status) {
         Reservation reservation = new Reservation();
         reservation.id = id;
         reservation.userId = userId;
@@ -41,26 +41,26 @@ public class Reservation {
         return reservation;
     }
 
-    public boolean cancelar(UUID actorId, boolean esAdmin, LocalDate hoy){
+    public boolean cancel(UUID actorId, boolean isAdmin, LocalDate today){
         if (!this.isActive()){
             throw new RuntimeException();
         }
-        if (hoy.isAfter(this.date)){
+        if (today.isAfter(this.date)){
             throw new RuntimeException();
         }
 
-        if (!actorId.equals(this.userId) && !esAdmin) {
+        if (!actorId.equals(this.userId) && !isAdmin) {
             throw new RuntimeException();
         }
 
 
-        this.status = Estado.CANCELLED;
+        this.status = Status.CANCELLED;
 
-        return hoy.isEqual(this.date);
+        return today.isEqual(this.date);
     }
 
     public boolean isActive(){
-        return this.status == Estado.ACTIVE;
+        return this.status == Status.ACTIVE;
     }
 
     public UUID getId() {
@@ -80,10 +80,10 @@ public class Reservation {
     }
 
 
-    public enum Estado{ACTIVE, CANCELLED;
+    public enum Status {ACTIVE, CANCELLED;
     }
 
-    public Estado getStatus() {
+    public Status getStatus() {
         return this.status;
     }
 }

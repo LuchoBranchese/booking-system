@@ -7,6 +7,7 @@ import com.lbranchese.BookingSystem.application.query.model.ReservationByUserSum
 import java.util.List;
 import java.util.UUID;
 
+
 public class GetReservationsByResource {
 
     private final ReservationQueryRepository reservationQueryRepository;

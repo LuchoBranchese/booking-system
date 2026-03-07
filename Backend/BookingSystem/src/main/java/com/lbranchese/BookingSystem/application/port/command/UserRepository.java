@@ -9,6 +9,6 @@ public interface UserRepository {
 
     Optional <User> findById (UUID id);
 
-    void save (User user);
+//    void save (User user);
 
 }

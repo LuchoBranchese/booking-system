@@ -81,7 +81,7 @@ public class SqlReservationRepository
                             rs.getObject("user_id", UUID.class),
                             rs.getObject("resource_id", UUID.class),
                             rs.getObject("date", LocalDate.class),
-                            Reservation.Estado.valueOf(
+                            Reservation.Status.valueOf(
                                     rs.getString("status")
                             )
                     )

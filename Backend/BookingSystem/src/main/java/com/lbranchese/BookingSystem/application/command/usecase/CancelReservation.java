@@ -8,30 +8,30 @@ import com.lbranchese.BookingSystem.domain.model.User;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class CancelarReserva {
+
+public class CancelReservation {
 
     private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
 
-    public CancelarReserva(UserRepository userRepository, ReservationRepository reservationRepository) {
+    public CancelReservation(UserRepository userRepository, ReservationRepository reservationRepository) {
         this.userRepository = userRepository;
         this.reservationRepository = reservationRepository;
     }
 
-    public void execute(UUID userId, UUID reservationId, LocalDate hoy) {
+    public void execute(UUID userId, UUID reservationId, LocalDate today) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException());
 
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new RuntimeException());
 
 
-        boolean penaliza = reservation.cancelar(user.getId(), user.isAdmin(), hoy);
+        boolean shouldPenalize = reservation.cancel(user.getId(), user.isAdmin(), today);
 
-        if (penaliza) {
-            user.aplicarPenalizacion(hoy);
+        if (shouldPenalize) {
+            user.applyPenalty(today);
         }
         reservationRepository.save(reservation);
-        userRepository.save(user);
 
 
     }

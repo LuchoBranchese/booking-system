@@ -1,53 +1,71 @@
 package com.lbranchese.BookingSystem.domain.model;
 
-import tools.jackson.databind.DatabindException;
-
 import java.time.LocalDate;
 import java.util.UUID;
 
 public class User {
 
     private UUID id;
-    private Rol rol;
-    private LocalDate bloqueadoHasta;
+    private Role role;
+    private LocalDate blockedUntil;
 
-    private User(Rol rol){
+    private User(Role role){
 
-        if (rol==null){
+        if (role == null){
             throw new RuntimeException();
         }
 
         this.id = UUID.randomUUID();
-        this.rol = rol;
+        this.role = role;
     }
 
-    public static User create(Rol rol){
-        User user = new User(rol);
+    protected User(){
+
+    }
+
+    public static User create(Role role){
+        User user = new User(role);
         return user;
     }
 
-    public boolean puedeReservar(LocalDate hoy){
-        if (this.bloqueadoHasta!=null && !hoy.isAfter(this.bloqueadoHasta) ){
+    public static User rehydrate(UUID id, LocalDate penalizedUntil, Role role) {
+        User user = new User();
+        user.id = id;
+        user.blockedUntil = penalizedUntil;
+        user.role = role;
+        return user;
+    }
+
+    public boolean canReserve(LocalDate today){
+        if (this.blockedUntil != null && !today.isAfter(this.blockedUntil) ){
             return false;
         }
         return true;
     }
 
     public boolean isAdmin(){
-        if (this.rol == Rol.ADMIN){
+        if (this.role == Role.ADMIN){
             return true;
         }
         else return false;
     }
 
+    public Role getRole(){
+        return this.role;
+    }
+
+
     public UUID getId(){
         return this.id;
     }
 
-    public void aplicarPenalizacion(LocalDate fecha){
-        this.bloqueadoHasta = fecha.plusDays(3);
+    public void applyPenalty(LocalDate date){
+        this.blockedUntil = date.plusDays(3);
     }
 
-    public enum Rol{ADMIN, USER}
+    public enum Role {ADMIN, USER}
 
+    public LocalDate getBlockedUntil(){
+        return this.blockedUntil;
+    }
 }

@@ -7,42 +7,42 @@ import static org.junit.jupiter.api.Assertions.*;
 class ResourceTest {
 
     @Test
-    void create_shouldThrow_whenEstadoIsNull() {
+    void create_shouldThrow_whenStatusIsNull() {
         assertThrows(RuntimeException.class, () -> Resource.create(null));
     }
 
     @Test
-    void create_shouldCreateResourceWithGivenEstado() {
-        Resource resourceActivo = Resource.create(Resource.Estado.ACTIVO);
-        Resource resourceInactivo = Resource.create(Resource.Estado.INACTIVO);
+    void create_shouldCreateResourceWithGivenStatus() {
+        Resource activeResource = Resource.create(Resource.Status.ACTIVE);
+        Resource inactiveResource = Resource.create(Resource.Status.INACTIVE);
 
-        assertTrue(resourceActivo.estaActivo());
-        assertFalse(resourceInactivo.estaActivo());
+        assertTrue(activeResource.isActive());
+        assertFalse(inactiveResource.isActive());
     }
 
     @Test
-    void estaActivo_shouldReturnTrueOnlyWhenEstadoEsActivo() {
-        Resource resource = Resource.create(Resource.Estado.ACTIVO);
-        assertTrue(resource.estaActivo());
+    void isActive_shouldReturnTrueOnlyWhenStatusIsActive() {
+        Resource resource = Resource.create(Resource.Status.ACTIVE);
+        assertTrue(resource.isActive());
     }
 
     @Test
-    void cambiarEstado_shouldChangeEstado_whenSolicitanteEsAdmin() {
-        User admin = User.create(User.Rol.ADMIN);
-        Resource resource = Resource.create(Resource.Estado.ACTIVO);
+    void changeStatus_shouldChangeStatus_whenRequesterIsAdmin() {
+        User admin = User.create(User.Role.ADMIN);
+        Resource resource = Resource.create(Resource.Status.ACTIVE);
 
-        resource.cambiarEstado(admin, Resource.Estado.INACTIVO);
+        resource.changeStatus(admin, Resource.Status.INACTIVE);
 
-        assertFalse(resource.estaActivo());
+        assertFalse(resource.isActive());
     }
 
     @Test
-    void cambiarEstado_shouldThrow_whenSolicitanteNoEsAdmin() {
-        User user = User.create(User.Rol.USER);
-        Resource resource = Resource.create(Resource.Estado.ACTIVO);
+    void changeStatus_shouldThrow_whenRequesterIsNotAdmin() {
+        User user = User.create(User.Role.USER);
+        Resource resource = Resource.create(Resource.Status.ACTIVE);
 
         assertThrows(RuntimeException.class,
-                () -> resource.cambiarEstado(user, Resource.Estado.INACTIVO));
+                () -> resource.changeStatus(user, Resource.Status.INACTIVE));
     }
 
 }

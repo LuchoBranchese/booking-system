@@ -5,37 +5,48 @@ import java.util.UUID;
 public class Resource {
 
     private UUID id;
-    private Estado estado;
+    private Status status;
 
-    private Resource(Estado estado){
+    private Resource(Status status){
         this.id = UUID.randomUUID();
-        this.estado= estado;
+        this.status = status;
     }
 
-    public static Resource create(Estado estado){
-        if (estado == null){
+    protected Resource (){
+
+    }
+
+    public static Resource create(Status status){
+        if (status == null){
             throw new RuntimeException();
         }
-        Resource resource = new Resource(estado);
+        Resource resource = new Resource(status);
         return resource;
     }
 
-    public boolean estaActivo(){
-        if (this.estado == Estado.ACTIVO){
+    public static Resource rehydrate(UUID id, Status status){
+        Resource resource = new Resource();
+        resource.id = id;
+        resource.status = status;
+        return resource;
+    }
+
+    public boolean isActive(){
+        if (this.status == Status.ACTIVE){
             return true;
         }
         return false;
     }
 
-    public void cambiarEstado(User solicitante, Estado nuevoEstado){
+    public void changeStatus(User requester, Status newStatus){
 
-        if (solicitante.isAdmin()){
-            this.estado = nuevoEstado;
+        if (requester.isAdmin()){
+            this.status = newStatus;
 
         }
         else throw new RuntimeException();
 
     }
 
-    public enum Estado {ACTIVO, INACTIVO}
+    public enum Status {ACTIVE, INACTIVE}
 }
