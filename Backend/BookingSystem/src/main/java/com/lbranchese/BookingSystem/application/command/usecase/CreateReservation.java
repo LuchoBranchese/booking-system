@@ -1,5 +1,10 @@
 package com.lbranchese.BookingSystem.application.command.usecase;
 
+import com.lbranchese.BookingSystem.application.command.exception.ResourceAlreadyReservedException;
+import com.lbranchese.BookingSystem.application.command.exception.ResourceInactiveException;
+import com.lbranchese.BookingSystem.application.command.exception.ResourceNotFoundException;
+import com.lbranchese.BookingSystem.application.command.exception.UserBlockedException;
+import com.lbranchese.BookingSystem.application.command.exception.UserNotFoundException;
 import com.lbranchese.BookingSystem.application.port.command.ReservationRepository;
 import com.lbranchese.BookingSystem.application.port.command.ResourceRepository;
 import com.lbranchese.BookingSystem.application.port.command.UserRepository;
@@ -25,20 +30,22 @@ public class CreateReservation {
 
     public UUID execute(UUID userId, UUID resourceId, LocalDate date, LocalDate today) {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException());
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         if (!user.canReserve(today)) {
-            throw new RuntimeException();
+            throw new UserBlockedException(user.getId(), user.getBlockedUntil());
         }
 
-        Resource resource = resourceRepository.findById(resourceId).orElseThrow(() -> new RuntimeException());
+        Resource resource = resourceRepository.findById(resourceId)
+                .orElseThrow(() -> new ResourceNotFoundException(resourceId));
 
         if (!resource.isActive()) {
-            throw new RuntimeException();
+            throw new ResourceInactiveException(resourceId);
         }
 
         if (reservationRepository.existsByResourceAndDate(resourceId, date)) {
-            throw new RuntimeException();
+            throw new ResourceAlreadyReservedException(resourceId, date);
         }
         Reservation reservation = Reservation.create(userId, resourceId, date, today);
 
